@@ -1,0 +1,29 @@
+`.gradle/
+/build
+*/build/
+
+# Intellij
+*.iml
+*/*.iml
+
+#some local files
+*/.settings/
+*/.DS_Store
+.DS_Store
+*/.idea/
+.idea/
+
+*.bak
+*.tem
+*.temp
+#.swp
+Thumbs.db
+.idea/inspectionProfiles/
+.idea/modules/thirty/src/main/resources/
+.idea/modules/thirty/src/test/resources/
+/release
+out
+logs/
+*.log
+*.out
+/*.jar
