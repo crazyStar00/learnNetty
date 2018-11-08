@@ -22,7 +22,7 @@ public class EchoServerHannel extends ChannelInboundHandlerAdapter {
 		ByteBuf in = (ByteBuf) msg;
 		logger.info("Server received : {}",in.toString(CharsetUtil.UTF_8));
 		//將接收到的信息寫給發送者，而不衝刷出站消息
-		ctx.write(in);
+		ctx.writeAndFlush(in);
 	}
 
 
