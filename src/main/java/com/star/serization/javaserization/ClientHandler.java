@@ -29,5 +29,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<Response> {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
+        ctx.close();
     }
 }
