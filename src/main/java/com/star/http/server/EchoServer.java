@@ -1,12 +1,13 @@
 package com.star.http.server;
 
-import com.star.helloworld.server.EchoServerHannel;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,10 @@ public class EchoServer {
 				.childHandler(new ChannelInitializer<SocketChannel>() {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
-						ch.pipeline().addLast(echoServerHannel);
+						ch.pipeline()
+								.addLast(new HttpResponseEncoder())
+								.addLast(new HttpRequestDecoder())
+								.addLast(echoServerHannel);
 					}
 				});
 
