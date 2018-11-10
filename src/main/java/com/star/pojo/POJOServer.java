@@ -24,7 +24,7 @@ public class POJOServer {
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(9999).sync();
-            future.channel().closeFuture();
+            future.channel().closeFuture().sync();
         } finally {
             workGroup.shutdownGracefully();
             boosGroup.shutdownGracefully();
