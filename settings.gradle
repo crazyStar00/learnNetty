@@ -1,2 +1,6 @@
 rootProject.name = 'netty-study'
+include 'netty-rpc'
+include 'discard'
+include 'netty-helloworld'
+include 'netty-java-serializable'
 
