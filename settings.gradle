@@ -3,4 +3,5 @@ include 'netty-rpc'
 include 'discard'
 include 'netty-helloworld'
 include 'netty-java-serializable'
+include 'dd'
 
