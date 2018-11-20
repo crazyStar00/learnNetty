@@ -1,9 +1,16 @@
 package com.star.rpc.client;
 
 
+import com.google.common.reflect.Reflection;
+import com.star.rpc.model.Person;
+import com.star.rpc.model.RpcRequest;
+import com.star.rpc.service.EchoService;
+import com.star.rpc.service.HelloService;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -13,12 +20,42 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+
 public class RpcClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
 
+    static RpcClient rpcClient = new RpcClient();
 
-    public static void main(String[] args) throws InterruptedException {
-        NioEventLoopGroup group = new NioEventLoopGroup();
+    static boolean isStart = false;
+    static NioEventLoopGroup group = new NioEventLoopGroup();
+    static Channel channel;
+
+    private RpcClient() {
+    }
+
+    public static RpcClient getInstance() {
+        return rpcClient;
+    }
+
+    public <T> T create(Class<T> serviceInterface) {
+        return Reflection.newProxy(serviceInterface, this::invoke);
+    }
+
+    public void call(RpcRequest rpcRequest) {
+        channel.writeAndFlush(rpcRequest);
+
+    }
+
+    private synchronized void start() {
+        if (isStart) {
+            return;
+        }
         try {
             Bootstrap bootstrap = new Bootstrap()
                     .group(group)
@@ -32,12 +69,61 @@ public class RpcClient {
                                     .addLast(new ObjectEncoder())
                                     .addLast(new ClientHandler());
                         }
-                    });
+                    }).option(ChannelOption.SO_KEEPALIVE , true);;
             ChannelFuture future = bootstrap.connect("localhost", 9999).sync();
-            future.channel().closeFuture().sync();
-        } finally {
+            isStart = true;
+            channel = future.channel();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        if (group != null) {
             group.shutdownGracefully();
         }
     }
 
+    public static void main(String[] args) throws InterruptedException {
+        RpcClient rpcClient = RpcClient.getInstance();
+        EchoService echoService = rpcClient.create(EchoService.class);
+        String star = echoService.echo("star");
+        LOGGER.info("server resutl :"+star);
+        HelloService helloService = rpcClient.create(HelloService.class);
+        Person star1 = helloService.hello("star", 18);
+        LOGGER.info("server result :"+star1.toString());
+    }
+
+    private Object invoke(Object proxy, Method method, Object[] args) throws ExecutionException, InterruptedException {
+        start();
+        if (Object.class == method.getDeclaringClass()) {
+            String name = method.getName();
+            if ("equals".equals(name)) {
+                return proxy == args[0];
+            } else if ("hashCode".equals(name)) {
+                return System.identityHashCode(proxy);
+            } else if ("toString".equals(name)) {
+                return proxy.getClass().getName() + "@" +
+                        Integer.toHexString(System.identityHashCode(proxy)) +
+                        ", with InvocationHandler " + this;
+            } else {
+                throw new IllegalStateException(String.valueOf(method));
+            }
+        }
+
+        RpcRequest rpcRequest = new RpcRequest();
+        rpcRequest.setRequestId(UUID.randomUUID().toString());
+        rpcRequest.setClassName(method.getDeclaringClass().getName());
+        rpcRequest.setMethodName(method.getName());
+        rpcRequest.setParameterTypes(method.getParameterTypes());
+        rpcRequest.setParameters(args);
+        DataSource.futureMap.put(rpcRequest.getRequestId(),new CompletableFuture<>());
+        call(rpcRequest);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        channel.writeAndFlush(rpcRequest).addListener(future -> countDownLatch.countDown());
+        countDownLatch.await();
+//        while (DataSource.futureMap.get(rpcRequest.getRequestId())==null){
+//        }
+        return DataSource.futureMap.get(rpcRequest.getRequestId()).get().getResult();
+    }
 }

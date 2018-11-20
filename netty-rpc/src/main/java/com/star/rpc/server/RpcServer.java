@@ -2,6 +2,8 @@ package com.star.rpc.server;
 
 import com.star.rpc.service.EchoService;
 import com.star.rpc.service.EchoServiceImpl;
+import com.star.rpc.service.HelloService;
+import com.star.rpc.service.HelloServiceImpl;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -61,6 +63,7 @@ public class RpcServer {
     public static void main(String[] args) throws InterruptedException {
         RpcServer rpcServer = new RpcServer();
         rpcServer.addService(EchoService.class.getName(), new EchoServiceImpl());
+        rpcServer.addService(HelloService.class.getName(), new HelloServiceImpl());
         rpcServer.run(9999);
     }
 }
