@@ -1,9 +1,5 @@
 package com.star.rpc.server;
 
-import com.star.rpc.service.EchoService;
-import com.star.rpc.service.EchoServiceImpl;
-import com.star.rpc.service.HelloService;
-import com.star.rpc.service.HelloServiceImpl;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -13,16 +9,19 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class RpcServer {
     private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
     private Map<String, Object> handlerMap = new HashMap<>();
-    public void run(int port){
+
+    public void run(int port) {
         NioEventLoopGroup boosGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         try {
@@ -53,17 +52,11 @@ public class RpcServer {
     }
 
     public RpcServer addService(String interfaceName, Object serviceBean) {
-        if (!handlerMap.containsKey(interfaceName)) {
+        if(!handlerMap.containsKey(interfaceName)) {
             logger.info("Loading service: {}", interfaceName);
             handlerMap.put(interfaceName, serviceBean);
         }
-
         return this;
     }
-    public static void main(String[] args) throws InterruptedException {
-        RpcServer rpcServer = new RpcServer();
-        rpcServer.addService(EchoService.class.getName(), new EchoServiceImpl());
-        rpcServer.addService(HelloService.class.getName(), new HelloServiceImpl());
-        rpcServer.run(9999);
-    }
+
 }

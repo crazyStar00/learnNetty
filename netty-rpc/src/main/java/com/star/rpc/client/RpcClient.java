@@ -53,7 +53,7 @@ public class RpcClient {
     }
 
     private synchronized void start() {
-        if (isStart) {
+        if(isStart) {
             return;
         }
         try {
@@ -69,7 +69,8 @@ public class RpcClient {
                                     .addLast(new ObjectEncoder())
                                     .addLast(new ClientHandler());
                         }
-                    }).option(ChannelOption.SO_KEEPALIVE , true);;
+                    }).option(ChannelOption.SO_KEEPALIVE, true);
+            ;
             ChannelFuture future = bootstrap.connect("localhost", 9999).sync();
             isStart = true;
             channel = future.channel();
@@ -79,30 +80,21 @@ public class RpcClient {
     }
 
     public void stop() {
-        if (group != null) {
+        if(group != null) {
             group.shutdownGracefully();
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        RpcClient rpcClient = RpcClient.getInstance();
-        EchoService echoService = rpcClient.create(EchoService.class);
-        String star = echoService.echo("star");
-        LOGGER.info("server resutl :"+star);
-        HelloService helloService = rpcClient.create(HelloService.class);
-        Person star1 = helloService.hello("star", 18);
-        LOGGER.info("server result :"+star1.toString());
-    }
 
     private Object invoke(Object proxy, Method method, Object[] args) throws ExecutionException, InterruptedException {
         start();
-        if (Object.class == method.getDeclaringClass()) {
+        if(Object.class == method.getDeclaringClass()) {
             String name = method.getName();
-            if ("equals".equals(name)) {
+            if("equals".equals(name)) {
                 return proxy == args[0];
-            } else if ("hashCode".equals(name)) {
+            } else if("hashCode".equals(name)) {
                 return System.identityHashCode(proxy);
-            } else if ("toString".equals(name)) {
+            } else if("toString".equals(name)) {
                 return proxy.getClass().getName() + "@" +
                         Integer.toHexString(System.identityHashCode(proxy)) +
                         ", with InvocationHandler " + this;
@@ -117,7 +109,7 @@ public class RpcClient {
         rpcRequest.setMethodName(method.getName());
         rpcRequest.setParameterTypes(method.getParameterTypes());
         rpcRequest.setParameters(args);
-        DataSource.futureMap.put(rpcRequest.getRequestId(),new CompletableFuture<>());
+        DataSource.futureMap.put(rpcRequest.getRequestId(), new CompletableFuture<>());
         call(rpcRequest);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         channel.writeAndFlush(rpcRequest).addListener(future -> countDownLatch.countDown());
@@ -126,4 +118,6 @@ public class RpcClient {
 //        }
         return DataSource.futureMap.get(rpcRequest.getRequestId()).get().getResult();
     }
+
+
 }
