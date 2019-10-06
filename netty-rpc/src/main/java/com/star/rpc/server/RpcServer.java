@@ -10,15 +10,12 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 public class RpcServer {
-    private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
     private Map<String, Object> handlerMap = new HashMap<>();
 
     public void run(int port) {
@@ -53,7 +50,7 @@ public class RpcServer {
 
     public RpcServer addService(String interfaceName, Object serviceBean) {
         if(!handlerMap.containsKey(interfaceName)) {
-            logger.info("Loading service: {}", interfaceName);
+            log.info("Loading service: {}", interfaceName);
             handlerMap.put(interfaceName, serviceBean);
         }
         return this;

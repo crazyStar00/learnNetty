@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
+
 public class RpcClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
 
     static RpcClient rpcClient = new RpcClient();
 
