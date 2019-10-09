@@ -6,4 +6,5 @@ include 'netty-java-serializable'
 include 'netty-rpc-zookeeper-oneport'
 include 'netty-rpc-zookeeper-mutiPort'
 include 'netty-rpc-zookeeper-mutiPort-realIp'
+include '8-netty-rpc-zookeeper-shutdownHook'
 
