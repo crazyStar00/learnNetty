@@ -28,9 +28,10 @@ public class Client {
                                     .addLast(new ClientHandler());
                         }
                     });
-            ChannelFuture future = bootstrap.connect("localhost", 9999).sync();
+            ChannelFuture future = bootstrap.connect("localhost", 1111).sync();
             future.channel().closeFuture().sync();
         } finally {
+            Thread.sleep(1000);
             group.shutdownGracefully();
         }
     }

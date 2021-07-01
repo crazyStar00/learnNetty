@@ -9,8 +9,8 @@ import static org.junit.Assert.*;
 
 public class RpcServerTest {
     public static void main(String[] args) {
-        RpcServer rpcServer = new RpcServer(9999);
-        RpcServer rpcServer2 = new RpcServer(8888);
+        RpcServer rpcServer = new RpcServer(1111);
+        RpcServer rpcServer2 = new RpcServer(2222);
         rpcServer.addService(EchoService.class.getName(), new EchoServiceImpl());
         rpcServer2.addService(HelloService.class.getName(), new HelloServiceImpl());
         rpcServer.start();

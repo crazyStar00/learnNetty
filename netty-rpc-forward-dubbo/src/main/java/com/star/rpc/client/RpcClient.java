@@ -21,11 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 
 public class RpcClient {
@@ -107,7 +109,12 @@ public class RpcClient {
         rpcRequest.setRequestId(UUID.randomUUID().toString());
         rpcRequest.setClassName(method.getDeclaringClass().getName());
         rpcRequest.setMethodName(method.getName());
-        rpcRequest.setParameterTypes(method.getParameterTypes());
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        String[] parameterTypeStr = new String[parameterTypes.length];
+        for (int i = 0; i < parameterTypes.length; i++) {
+            parameterTypeStr[i] = parameterTypes[i].getName();
+        }
+        rpcRequest.setParameterTypes(parameterTypeStr);
         rpcRequest.setParameters(args);
         DataSource.futureMap.put(rpcRequest.getRequestId(), new CompletableFuture<>());
         call(rpcRequest);
@@ -116,7 +123,6 @@ public class RpcClient {
         countDownLatch.await();
 //        while (DataSource.futureMap.get(rpcRequest.getRequestId())==null){
 //        }
-        method.getReturnType();
         return DataSource.futureMap.get(rpcRequest.getRequestId()).get().getResult();
     }
 

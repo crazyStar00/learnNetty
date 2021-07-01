@@ -1,10 +1,12 @@
 rootProject.name = 'netty-study'
 include 'netty-rpc'
+include 'netty-rpc-forward-dubbo'
 include 'netty-discard'
 include 'netty-helloworld'
 include 'netty-java-serializable'
 include 'netty-rpc-zookeeper-oneport'
 include 'netty-rpc-zookeeper-mutiPort'
 include 'netty-rpc-zookeeper-mutiPort-realIp'
+include 'netty-rpc-zookeeper-mutiPort-realIp-dubbo-forword'
 include '8-netty-rpc-zookeeper-shutdownHook'
 

@@ -1,4 +1,4 @@
-package com.star.serization.javaserization.server;
+package com.star.rpc.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -9,9 +9,16 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import lombok.extern.slf4j.Slf4j;
 
-public class Server {
-    public static void main(String[] args) throws InterruptedException {
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+public class RpcServer {
+    private Map<String, Object> handlerMap = new HashMap<>();
+
+    public void run(int port) {
         NioEventLoopGroup boosGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         try {
@@ -25,17 +32,28 @@ public class Server {
                                     .addLast(new ObjectDecoder(1024 * 1024,
                                             ClassResolvers.weakCachingResolver(this.getClass().getClassLoader())))
                                     .addLast(new ObjectEncoder())
-                                    .addLast(new ServerHandler());
+                                    .addLast(new ServerHandler(handlerMap));
                         }
                     });
             //绑定端口，同步等待成功
-            ChannelFuture future = serverBootstrap.bind(1111).sync();
+            ChannelFuture future = serverBootstrap.bind(port).sync();
             //等待服务端监听端口关闭
             future.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             //优雅退出，释放资源池
             workGroup.shutdownGracefully();
             boosGroup.shutdownGracefully();
         }
     }
+
+    public RpcServer addService(String interfaceName, Object serviceBean) {
+        if(!handlerMap.containsKey(interfaceName)) {
+            log.info("Loading service: {}", interfaceName);
+            handlerMap.put(interfaceName, serviceBean);
+        }
+        return this;
+    }
+
 }

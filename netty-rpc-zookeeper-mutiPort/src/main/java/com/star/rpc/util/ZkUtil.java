@@ -5,7 +5,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
 public class ZkUtil {
-    public static String connectionString = "tencent:2181";
+    public static String connectionString = "127.0.0.1:2181";
     public static CuratorFramework curatorFramework;
 
     public static void init() {
