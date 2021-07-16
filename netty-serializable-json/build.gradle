@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group 'com.star'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    maven{
+        url 'http://maven.aliyun.com/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.25.Final'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.8.0-beta2'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta2'
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    compile 'com.google.code.gson:gson:2.8.7'
+}
