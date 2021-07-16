@@ -16,5 +16,13 @@ public class ClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         completableFuture.complete(msg);
     }
 
+    @Override
+    public boolean acceptInboundMessage(Object msg) throws Exception {
+        return super.acceptInboundMessage(msg);
+    }
 
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        super.channelRead(ctx, msg);
+    }
 }

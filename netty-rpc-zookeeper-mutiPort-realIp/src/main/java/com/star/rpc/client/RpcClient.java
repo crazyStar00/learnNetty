@@ -47,7 +47,7 @@ public class RpcClient {
         return new RpcClient();
     }
 
-    public <T> T create(Class<T> serviceInterface) {
+    public <T> T locate(Class<T> serviceInterface) {
         try {
             String interfaceName = serviceInterface.getName();
             if(ZkUtil.curatorFramework == null) {

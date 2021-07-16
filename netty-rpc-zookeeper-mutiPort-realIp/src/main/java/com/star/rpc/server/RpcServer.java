@@ -61,7 +61,7 @@ public class RpcServer {
         }
     }
 
-    public RpcServer addService(String interfaceName, Object serviceBean) {
+    public RpcServer register(String interfaceName, Object serviceBean) {
         if(!handlerMap.containsKey(interfaceName)) {
             log.info("Loading service: {}", interfaceName);
             handlerMap.put(interfaceName, serviceBean);

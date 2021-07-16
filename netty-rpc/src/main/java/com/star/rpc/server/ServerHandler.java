@@ -24,7 +24,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         RpcRequest request = (RpcRequest) msg;
-        log.info("channelRead0");
         String className = request.getClassName();
         Object serviceBean = handlerMap.get(className);
 
@@ -40,6 +39,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         rpcResponse.setResult(invoke);
         log.info("result " + rpcResponse.toString());
         ctx.writeAndFlush(rpcResponse);
+        ctx.close();
     }
 
 
