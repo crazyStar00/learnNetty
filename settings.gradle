@@ -1,5 +1,6 @@
 rootProject.name = 'netty-study'
 include 'netty-rpc'
+include 'netty-rpe-ldle'
 include 'netty-rpc-forward-dubbo'
 include 'netty-discard'
 include 'netty-helloworld'
@@ -9,4 +10,6 @@ include 'netty-rpc-zookeeper-mutiPort'
 include 'netty-rpc-zookeeper-mutiPort-realIp'
 include 'netty-rpc-zookeeper-mutiPort-realIp-dubbo-forword'
 include '8-netty-rpc-zookeeper-shutdownHook'
+include 'netty-stick-package'
+include 'netty-serializable-json'
 
